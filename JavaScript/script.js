@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const cityForm = document.getElementById('city');
     const weatherDisplay = document.getElementById('weaterCity');
     const deleteButton = document.getElementById('deleteButton');
+    const defaultCityInput = document.getElementById('defaultCityInput'); // Referencia al input para ciudad por defecto
+    const addCityButton = document.getElementById('addCityButton'); // Referencia al botón para agregar ciudad
     const apiKey = '4288a9190afbd0f09ef19578b5e03910';
 
-    // Ciudades por defecto
-    const defaultCities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+    // Recuperar ciudades por defecto del localStorage o iniciar con un arreglo vacío
+    let defaultCities = JSON.parse(localStorage.getItem('defaultCities')) || ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
     // Recuperar ciudades almacenadas del localStorage o iniciar con un arreglo vacío
     let storedCities = JSON.parse(localStorage.getItem('cities')) || [];
 
@@ -13,9 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayCities() {
         weatherDisplay.innerHTML = ''; // Limpiar la visualización
 
-        // Mantener la ciudad recién agregada al inicio y ordenar solo las ciudades por defecto
-        const allCities = [...storedCities, ...defaultCities.sort()];
+        // Ordenar ciudades por defecto cada vez que se muestran
+        const sortedDefaultCities = defaultCities.sort();
+        // Mantener la ciudad recién agregada al inicio y combinar con ciudades por defecto
+        const allCities = [...storedCities, ...sortedDefaultCities];
 
+        // Mostrar temperaturas de todas las ciudades
         allCities.forEach(city => {
             const cityDiv = document.createElement('div');
             const temperature = localStorage.getItem(city);
@@ -27,12 +32,42 @@ document.addEventListener('DOMContentLoaded', function() {
             weatherDisplay.appendChild(cityDiv);
         });
 
-        // Ocultar o mostrar el formulario según si hay ciudades almacenadas
+        // Mostrar la ciudad más caliente
+        showHottestCity();
+
+        // Mostrar u ocultar el input y botón de agregar ciudad por defecto
         if (storedCities.length > 0) {
-            cityForm.style.display = 'none'; // Ocultar formulario si hay ciudades guardadas
+            defaultCityInput.style.display = 'block'; // Mostrar campo de entrada
+            addCityButton.style.display = 'block'; // Mostrar botón de agregar ciudad
+            cityForm.style.display = 'none'; // Ocultar el formulario de búsqueda
         } else {
+            defaultCityInput.style.display = 'none'; // Ocultar campo de entrada
+            addCityButton.style.display = 'none'; // Ocultar botón de agregar ciudad
             cityForm.style.display = 'block'; // Mostrar formulario si no hay ciudades
         }
+    }
+
+    // Función para mostrar la ciudad más caliente entre las ciudades por defecto
+    function showHottestCity() {
+        let hottestCity = null;
+        let highestTemperature = -Infinity;
+
+        defaultCities.forEach(city => {
+            const temperature = parseFloat(localStorage.getItem(city));
+            if (temperature !== null && temperature > highestTemperature) {
+                highestTemperature = temperature;
+                hottestCity = city;
+            }
+        });
+
+        const hottestCityDiv = document.createElement('div');
+        if (hottestCity) {
+            hottestCityDiv.textContent = `La ciudad más caliente es ${hottestCity} con ${highestTemperature} °C`;
+        } else {
+            hottestCityDiv.textContent = `No se pudo determinar la ciudad más caliente.`;
+        }
+
+        weatherDisplay.appendChild(hottestCityDiv);
     }
 
     // Función para obtener la temperatura de cada ciudad por defecto
@@ -47,9 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar el formulario de búsqueda
     cityForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const inputCity = document.getElementById('inputWeaterCity').value; // Obtener el valor del input
+        const inputCity = document.getElementById('inputWeaterCity').value.trim(); // Obtener el valor del input
         if (inputCity) {
             addCity(inputCity); // Llamar a la función para agregar ciudad
+            document.getElementById('inputWeaterCity').value = ''; // Limpiar el campo de entrada
         }
     });
 
@@ -61,11 +97,32 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('cities', JSON.stringify(storedCities)); // Guardar en localStorage
             displayCities(); // Actualizar la visualización inmediatamente
             getWeather(city); // Obtener la temperatura
+
+            // Ocultar el formulario de búsqueda si es la primera ciudad que se agrega
+            if (storedCities.length === 1) {
+                cityForm.style.display = 'none'; // Ocultar formulario de búsqueda
+            }
         } else {
             alert('La ciudad ya está en la lista.');
         }
     }
 
+    // Manejar el botón para agregar ciudades por defecto
+    addCityButton.addEventListener('click', function() {
+        const defaultCity = defaultCityInput.value.trim(); // Obtener la ciudad del input
+        if (defaultCity && !defaultCities.includes(defaultCity) && !storedCities.includes(defaultCity)) {
+            defaultCities.push(defaultCity); // Agregar ciudad a la lista de ciudades por defecto
+            defaultCities.sort(); // Ordenar ciudades por defecto alfabéticamente
+            localStorage.setItem('defaultCities', JSON.stringify(defaultCities)); // Guardar en localStorage
+            defaultCityInput.value = ''; // Limpiar el campo de entrada
+            displayCities(); // Actualizar la visualización
+            getWeather(defaultCity); // Obtener la temperatura para la nueva ciudad
+        } else {
+            alert('La ciudad ya está en la lista o es inválida.');
+        }
+    });
+
+    // Eliminar ciudades almacenadas
     deleteButton.addEventListener('click', function() {
         localStorage.removeItem('cities'); // Eliminar solo las ciudades personalizadas
         weatherDisplay.innerHTML = ''; // Limpiar la vista
