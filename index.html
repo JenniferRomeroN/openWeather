@@ -8,11 +8,14 @@
 </head>
 <body>
     <form id="city">
-        <input type="text" id="inputWeaterCity"placeholder="Cual es tu ciudad?">
+        <input type="text" id="inputWeaterCity" placeholder="¿Cuál es tu ciudad?">
         <button type="submit">Search</button>
-        <button id="addCityButton" type="button">Add City</button> <!-- Botón para agregar ciudad -->
     </form>
+    
+    <input type="text" id="defaultCityInput" placeholder="Agregar una ciudad por defecto">
+    <button id="addCityButton" type="button" style="display: none;">Add City</button> <!-- Ocultado por defecto -->
     <button id="deleteButton">Delete city</button>
+    
     <div id="weaterCity"></div>
 
 <script src="./JavaScript/script.js"></script>
