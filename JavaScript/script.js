@@ -9,13 +9,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Recuperar ciudades almacenadas del localStorage o iniciar con un arreglo vacío
     let storedCities = JSON.parse(localStorage.getItem('cities')) || [];
 
-    // Combinar ciudades por defecto y almacenadas, evitando duplicados
-    const allCities = Array.from(new Set([...defaultCities, ...storedCities]));
-
     // Función para mostrar las temperaturas de las ciudades
     function displayCities() {
         weatherDisplay.innerHTML = ''; // Limpiar la visualización
-        allCities.sort(); // Ordenar alfabéticamente
+
+        // Mantener la ciudad recién agregada al inicio y ordenar solo las ciudades por defecto
+        const allCities = [...storedCities, ...defaultCities.sort()];
+
         allCities.forEach(city => {
             const cityDiv = document.createElement('div');
             const temperature = localStorage.getItem(city);
@@ -26,6 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             weatherDisplay.appendChild(cityDiv);
         });
+
+        // Ocultar o mostrar el formulario según si hay ciudades almacenadas
+        if (storedCities.length > 0) {
+            cityForm.style.display = 'none'; // Ocultar formulario si hay ciudades guardadas
+        } else {
+            cityForm.style.display = 'block'; // Mostrar formulario si no hay ciudades
+        }
     }
 
     // Función para obtener la temperatura de cada ciudad por defecto
@@ -48,11 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para agregar ciudad
     function addCity(city) {
-        if (!allCities.includes(city)) { // Verificar que la ciudad no esté ya en la lista
-            storedCities.push(city); // Agregar ciudad al arreglo
+        // Verificar que la ciudad no esté ya en la lista
+        if (!storedCities.includes(city) && !defaultCities.includes(city)) {
+            storedCities.unshift(city); // Agregar ciudad al inicio del arreglo
             localStorage.setItem('cities', JSON.stringify(storedCities)); // Guardar en localStorage
+            displayCities(); // Actualizar la visualización inmediatamente
             getWeather(city); // Obtener la temperatura
-            displayCities(); // Actualizar la visualización
         } else {
             alert('La ciudad ya está en la lista.');
         }
@@ -73,9 +81,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.main && data.main.temp) {
                 const temperature = data.main.temp;
                 localStorage.setItem(city, temperature); // Guardar temperatura en localStorage
-                displayCities(); // Actualizar la visualización
+                displayCities(); // Actualizar la visualización aquí
             } else {
                 console.error('No se pudo obtener la temperatura para la ciudad:', city);
+                displayCities(); // Asegurarse de que las ciudades se muestren incluso si no se obtuvo la temperatura
             }
         })
         .catch(error => {
@@ -83,4 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
             weatherDisplay.textContent = 'Error al obtener los datos';
         });
     }
+
+    // Llamar a displayCities inicialmente para mostrar ciudades y ocultar formulario si corresponde
+    displayCities();
 });
