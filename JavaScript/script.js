@@ -45,13 +45,20 @@ document.addEventListener('DOMContentLoaded', function() {
             addCityButton.style.display = 'none'; // Ocultar botón de agregar ciudad
             cityForm.style.display = 'block'; // Mostrar formulario si no hay ciudades
         }
+
+        // Mostrar u ocultar el botón de eliminar dependiendo de si hay ciudades almacenadas
+        if (storedCities.length === 0) {
+            deleteButton.style.display = 'none'; // Ocultar el botón si no hay ciudades almacenadas
+        } else {
+            deleteButton.style.display = 'block'; // Mostrar el botón si hay ciudades
+        }
     }
 
     // Función para mostrar la ciudad más caliente entre las ciudades por defecto
     function showHottestCity() {
         let hottestCity = null;
         let highestTemperature = -Infinity;
-
+    
         defaultCities.forEach(city => {
             const temperature = parseFloat(localStorage.getItem(city));
             if (temperature !== null && temperature > highestTemperature) {
@@ -59,14 +66,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 hottestCity = city;
             }
         });
-
+    
         const hottestCityDiv = document.createElement('div');
         if (hottestCity) {
-            hottestCityDiv.textContent = `La ciudad más caliente es ${hottestCity} con ${highestTemperature} °C`;
+            // Crear la tarjeta Bootstrap con un degradado
+            hottestCityDiv.innerHTML = `
+ <div class="card text-white mb-3 steam-card" style="max-width: 18rem; background: linear-gradient(to bottom, rgba(255, 99, 71, 0.9), rgba(255, 165, 0, 0.8)); position: relative;">
+            <div class="card-header">Ciudad más caliente</div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-sun" style="color: yellow;"></i> ${hottestCity}
+                </h5>
+                <p class="card-text">La temperatura es ${highestTemperature} °C</p>
+            </div>
+            <div class="steam"></div>
+        </div>
+            `;
         } else {
             hottestCityDiv.textContent = `No se pudo determinar la ciudad más caliente.`;
         }
-
+    
         weatherDisplay.appendChild(hottestCityDiv);
     }
 
