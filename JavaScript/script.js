@@ -11,27 +11,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Recuperar ciudades almacenadas del localStorage o iniciar con un arreglo vacío
     let storedCities = JSON.parse(localStorage.getItem('cities')) || [];
 
+    function getWeatherCardStyle(weatherCondition) {
+        switch (weatherCondition) {
+            case 'Clear':
+                return { 
+                    style: 'background: linear-gradient(to bottom, rgba(135, 206, 250, 0.9), rgba(135, 206, 250, 0.5));', 
+                    animationClass: 'float' 
+                }; // Soleado
+            case 'Clouds':
+                return { 
+                    style: 'background: linear-gradient(to bottom, rgba(169, 169, 169, 0.9), rgba(169, 169, 169, 0.5));', 
+                    animationClass: 'move-clouds' 
+                }; // Nublado
+            case 'Rain':
+                return { 
+                    style: 'background: linear-gradient(to bottom, rgba(0, 0, 255, 0.9), rgba(0, 0, 255, 0.5));', 
+                    animationClass: '' 
+                }; // Lluvioso
+            case 'Snow':
+                return { 
+                    style: 'background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));', 
+                    animationClass: '' 
+                }; // Nevado
+            default:
+                return { 
+                    style: 'background: linear-gradient(to bottom, rgba(128, 128, 128, 0.9), rgba(128, 128, 128, 0.5));', 
+                    animationClass: '' 
+                }; // Desconocido
+        }
+    }
     // Función para mostrar las temperaturas de las ciudades
     function displayCities() {
         weatherDisplay.innerHTML = ''; // Limpiar la visualización
-
-        // Ordenar ciudades por defecto cada vez que se muestran
         const sortedDefaultCities = defaultCities.sort();
-        // Mantener la ciudad recién agregada al inicio y combinar con ciudades por defecto
         const allCities = [...storedCities, ...sortedDefaultCities];
 
-        // Mostrar temperaturas de todas las ciudades
         allCities.forEach(city => {
+            const cityData = JSON.parse(localStorage.getItem(city));
             const cityDiv = document.createElement('div');
-            const temperature = localStorage.getItem(city);
-            if (temperature) {
-                cityDiv.textContent = `La temperatura en ${city} es ${temperature} °C`;
+            if (cityData) {
+                const temperature = cityData.temperature;
+                const weatherCondition = cityData.weatherCondition;
+                const { style, animationClass } = getWeatherCardStyle(weatherCondition); // Obtener estilo y clase de animación
+                cityDiv.innerHTML = `
+                    <div class="card text-white mb-3 ${animationClass}" style="max-width: 18rem; ${style}">
+                        <div class="card-body">
+                            <h5 class="card-title">${city}</h5>
+                            <p class="card-text">${temperature} °C</p>
+                        </div>
+                    </div>
+                `;
             } else {
                 cityDiv.textContent = `No se pudo obtener la temperatura para ${city}`;
             }
             weatherDisplay.appendChild(cityDiv);
         });
-
         // Mostrar la ciudad más caliente
         showHottestCity();
 
@@ -43,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             defaultCityInput.style.display = 'none'; // Ocultar campo de entrada
             addCityButton.style.display = 'none'; // Ocultar botón de agregar ciudad
-            cityForm.style.display = 'block'; // Mostrar formulario si no hay ciudades
+            cityForm.style.display = 'flex'; // Mostrar formulario si no hay ciudades
         }
 
         // Mostrar u ocultar el botón de eliminar dependiendo de si hay ciudades almacenadas
@@ -58,34 +92,43 @@ document.addEventListener('DOMContentLoaded', function() {
     function showHottestCity() {
         let hottestCity = null;
         let highestTemperature = -Infinity;
-    
+        let hottestWeatherCondition = ''; // Variable para almacenar el estado del clima
+
         defaultCities.forEach(city => {
-            const temperature = parseFloat(localStorage.getItem(city));
-            if (temperature !== null && temperature > highestTemperature) {
-                highestTemperature = temperature;
-                hottestCity = city;
+            const cityData = JSON.parse(localStorage.getItem(city));
+            if (cityData) {
+                const temperature = parseFloat(cityData.temperature);
+                const weatherCondition = cityData.weatherCondition; // Obtener el estado del clima
+                if (temperature > highestTemperature) {
+                    highestTemperature = temperature;
+                    hottestCity = city;
+                    hottestWeatherCondition = weatherCondition; // Actualizar el estado del clima más caliente
+                }
             }
         });
-    
+
         const hottestCityDiv = document.createElement('div');
         if (hottestCity) {
-            // Crear la tarjeta Bootstrap con un degradado
+            // Obtener el estilo del clima
+            const weatherStyle = getWeatherCardStyle(hottestWeatherCondition);
+            
+            // Crear la tarjeta Bootstrap con el degradado
             hottestCityDiv.innerHTML = `
- <div class="card text-white mb-3 steam-card" style="max-width: 18rem; background: linear-gradient(to bottom, rgba(255, 99, 71, 0.9), rgba(255, 165, 0, 0.8)); position: relative;">
-            <div class="card-header">Ciudad más caliente</div>
-            <div class="card-body">
-                <h5 class="card-title">
-                    <i class="fas fa-sun" style="color: yellow;"></i> ${hottestCity}
-                </h5>
-                <p class="card-text">La temperatura es ${highestTemperature} °C</p>
-            </div>
-            <div class="steam"></div>
+            <div class="card text-white mb-3 steam-card" style="max-width: 18rem; background: linear-gradient(to bottom, rgba(255, 99, 71, 0.9), rgba(255, 165, 0, 0.8)); position: relative;">
+                <div class="card-header">hottest city by default</div>
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-sun" style="color: yellow;"></i> ${hottestCity}
+                        </h5>
+                        <p class="card-text"> ${highestTemperature} °C</p>
+                    </div>
+                <div class="steam"></div>
         </div>
             `;
         } else {
-            hottestCityDiv.textContent = `No se pudo determinar la ciudad más caliente.`;
+            hottestCityDiv.textContent = 'No se pudo determinar la ciudad más caliente.';
         }
-    
+
         weatherDisplay.appendChild(hottestCityDiv);
     }
 
@@ -152,21 +195,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para obtener la temperatura de la ciudad
     function getWeather(city) {
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`) // Agregar &units=metric para Celsius
-        .then(response => response.json())
-        .then(data => {
-            if (data.main && data.main.temp) {
-                const temperature = data.main.temp;
-                localStorage.setItem(city, temperature); // Guardar temperatura en localStorage
-                displayCities(); // Actualizar la visualización aquí
-            } else {
-                console.error('No se pudo obtener la temperatura para la ciudad:', city);
-                displayCities(); // Asegurarse de que las ciudades se muestren incluso si no se obtuvo la temperatura
-            }
-        })
-        .catch(error => {
-            console.error('Error al llamar la API', error);
-            weatherDisplay.textContent = 'Error al obtener los datos';
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.main && data.main.temp) {
+                    const temperature = data.main.temp;
+                    const weatherCondition = data.weather[0].main; // Obtener el estado del clima
+                    localStorage.setItem(city, JSON.stringify({ temperature, weatherCondition })); // Guardar temperatura y estado del clima en localStorage
+                    displayCities(); // Actualizar la visualización aquí
+                } else {
+                    console.error('No se pudo obtener la temperatura para la ciudad:', city);
+                    displayCities(); // Asegurarse de que las ciudades se muestren incluso si no se obtuvo la temperatura
+                }
+            })
+            .catch(error => {
+                console.error('Error al llamar la API', error);
+                weatherDisplay.textContent = 'Error al obtener los datos';
+            });
     }
 
     // Llamar a displayCities inicialmente para mostrar ciudades y ocultar formulario si corresponde
