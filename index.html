@@ -5,40 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="./css/style.css">
-    <link rel="icon" href="https://i.pinimg.com/originals/51/47/4c/51474c8511c510c24162e0358622367a.gif">
-    <title>Document</title>
+    <link rel="icon" href="weatherIcon.png">
+    <title>SkyWave</title>
 </head>
-<body>
+<body class="move-clouds">
     <!-- Image and text -->
     <nav class="navbar navbar-light text-center">
-        <a class="navbar-brand mx-auto" href="#">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZqMTE205odpbdvHbn9StLB5IgeXJ7Ejpe6A&s" width="30" height="30" class="d-inline-block align-top" alt="">
-            SkyWave
-        </a>
+        <a class="navbar-brand mx-auto" href="#">SkyWave</a>
     </nav>
 
     <!-- Container to center content -->
     <div class="container d-flex justify-content-center mt-5">
-        <div >
-            <!-- Form with search -->
+        <div>
             <form id="city" class="input-group mb-3 mt-4">
-                <input type="text" id="inputWeaterCity" class="form-control" placeholder="¿Cuál es tu ciudad?" >
+                <input type="text" id="inputWeaterCity" class="form-control" placeholder="What is your city?">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    <button class="btn btn-outline-light" type="submit">Search</button>
                 </div>
             </form>
+        
+
+
 
             <!-- Additional form controls -->
             <div class="input-group mb-3 mt-4">
-                <input type="text" id="defaultCityInput" class="form-control" placeholder="Agregar una ciudad por defecto">
+                <input type="text" id="defaultCityInput" class="form-control" placeholder="Add default city">
                 <div class="input-group-append">
                     <button id="addCityButton" type="submit" class="btn btn-outline-secondary">Add City</button>
+                    <button id="deleteButton" class="btn btn-danger">Delete City</button>
                 </div>
             </div>
 
-            <button id="deleteButton" class="btn btn-danger btn-block">Delete city</button>
-
-            <div id="weaterCity"></div>
+            <div id="welcomeMessage"></div>
+            <div id="weaterCity" class="city-cards-container">
+                <!-- Tarjetas de ciudad -->
+                <div class="city-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">City 1</h5>
+                            <p class="card-text">Temperature: 20°C</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="city-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">City 2</h5>
+                            <p class="card-text">Temperature: 25°C</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="city-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">City 3</h5>
+                            <p class="card-text">Temperature: 30°C</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="city-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">City 4</h5>
+                            <p class="card-text">Temperature: 22°C</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Tarjeta de la ciudad más caliente -->
+                <div class="hottest-city-container">
+                    <div class="hottest-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Hottest City</h5>
+                                <p class="card-text">Temperature: 40°C</p>
+                                <div class="steam"></div> <!-- Efecto de vapor -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

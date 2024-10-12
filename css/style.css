@@ -1,20 +1,83 @@
-.navbar{
-    background-color: #87CEEB;
+.navbar {
+    background-color: #f8f9fa; /* Gris muy claro */
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra sutil para dar profundidad */
 }
 
-#addCityButton{
-    display: none;
+/* Estilo para el texto del navbar */
+.navbar .navbar-brand {
+    color: #333; /* Color de texto oscuro para buena legibilidad */
+    font-weight: bold; /* Negrita para destacar */
 }
 
-input, button {
-    box-sizing: border-box;
+.navbar .navbar-brand:hover {
+    color: #555; /* Color más oscuro al pasar el ratón */
 }
 
-#inputWeaterCity {
-    margin: 0;
-    padding: 0.375rem 0.75rem;
-    width: 100%; /* Asegura que ocupe todo el ancho del contenedor */
-    box-sizing: border-box; /* Esto asegura que el padding no se sume al ancho total */
+body {
+    background: linear-gradient(to bottom, #87CEFA, #ffffff); /* Degradado de cielo a blanco */
+    min-height: 100vh; /* Asegúrate de que el cuerpo ocupe toda la altura de la ventana */
+    margin: 0; /* Elimina el margen por defecto */
+}
+
+/* Contenedor para las tarjetas de ciudad */
+.city-cards-container {
+    display: flex;
+    flex-wrap: wrap; /* Permitir que las tarjetas se envuelvan en múltiples líneas */
+    justify-content: center; /* Centrar las tarjetas */
+    gap: 1rem; /* Espacio entre tarjetas */
+}
+
+/* Estilo para las tarjetas de ciudad */
+.city-card {
+    flex: 1 1 calc(25% - 1rem); /* Tamaño flexible de las tarjetas (4 en una fila) */
+    min-width: 200px; /* Ancho mínimo */
+    max-width: 300px; /* Ancho máximo */
+    display: flex;
+    justify-content: center;
+}
+
+/* Estilo para las tarjetas */
+.card {
+    border: none; /* Sin bordes */
+    border-radius: 15px; /* Esquinas redondeadas */
+    transition: transform 0.3s ease; /* Transición para el efecto hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Aumenta el tamaño al pasar el ratón */
+}
+
+/* Espaciado y tipografía para el cuerpo de las tarjetas */
+.card-body {
+    padding: 1.5rem; /* Espaciado interno */
+}
+
+.card-title {
+    font-size: 1.25rem; /* Tamaño de fuente para el título */
+    font-weight: bold; /* Negrita */
+    margin-bottom: 0.5rem; /* Espacio inferior */
+}
+
+.card-text {
+    font-size: 1.125rem; /* Tamaño de fuente para el texto */
+}
+
+/* Estilo para la tarjeta de la ciudad más caliente */
+.hottest-city-container {
+    display: flex;
+    justify-content: center; /* Centrar la tarjeta más caliente */
+    margin: 1rem 0; /* Espacio alrededor de la tarjeta más caliente */
+}
+
+/* Tarjeta más caliente */
+
+.hottest-card {
+    flex: 1 1 calc(25% - 1rem); /* Asegúrate de que tenga el mismo tamaño que las otras tarjetas */
+    min-width: 200px; /* Ancho mínimo, puedes ajustarlo si es necesario */
+    max-width: 300px; /* Ancho máximo, ajustado para coincidir con las otras tarjetas */
+    margin: 0; /* Sin margen adicional */
 }
 
 
@@ -28,7 +91,8 @@ input, button {
     overflow: hidden;
 }
 
-.steam::before, .steam::after {
+.steam::before,
+.steam::after {
     content: '';
     position: absolute;
     width: 15px;
@@ -60,3 +124,91 @@ input, button {
         opacity: 0;
     }
 }
+
+/* Estilo general de los inputs y botones */
+.form-control, 
+.btn {
+    display: inline-block; /* Fuerza a los inputs y botones a alinearse inline */
+    width: auto; /* Deja que los elementos ocupen solo el espacio necesario */
+    min-width: 150px; /* Puedes ajustar este valor para mantener un tamaño mínimo */
+    padding: 0.375rem 0.75rem; /* Ajuste del padding */
+}
+
+.btn{
+    min-width: 100px;
+}
+
+/* Asegurar que los inputs se expanden correctamente */
+.input-group .form-control {
+    flex: 1; /* Permitir que los inputs se expandan para ocupar el espacio disponible */
+}
+
+/* Asegurar que los botones no se estiren */
+.input-group-append .btn {
+    flex: 0 0 auto; /* Evita que los botones se estiren */
+}
+
+/* Margen para el botón "Delete City" */
+#deleteButton {
+    margin-left: 0.5rem; /* Espacio entre los botones */
+}
+
+/* Estilo para los inputs de búsqueda */
+#inputWeaterCity,
+#defaultCityInput {
+    flex: 1; /* Permitir que los inputs usen todo el espacio disponible */
+    min-width: 250px;
+    padding: 0.375rem 0.75rem; 
+}
+
+/* Estilo para el botón en el foco */
+button {
+    background-color: #007bff; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Esquinas redondeadas */
+    cursor: pointer; /* Cambiar el cursor */
+    transition: background-color 0.3s; /* Transición para el fondo */
+}
+
+button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+}
+
+/* Botones en fila */
+.input-group {
+    display: flex; /* Usar flexbox para los botones */
+    align-items: center; /* Centrar verticalmente los botones */
+}
+
+/* Animación para tarjetas despejadas */
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Animación para tarjetas nubladas */
+@keyframes moveClouds {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+/* .move-clouds {
+    background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLfgvbenw1A34HRCGeKctDEB2buCJKzoSdf8jdj7SKeg2pzaNWdg_fJJKasmPKURmP-Ac&usqp=CAU') repeat-x;
+    animation: moveClouds 5s linear infinite;
+} */
