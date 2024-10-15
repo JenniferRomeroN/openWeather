@@ -65,6 +65,18 @@ body {
     font-size: 1.125rem; /* Tamaño de fuente para el texto */
 }
 
+.delete-city-icon {
+    color: white;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+    transition: color 0.3s;
+}
+
+.delete-city-icon:hover {
+    color: #ff4d4d;
+}
+
+
 /* Estilo para la tarjeta de la ciudad más caliente */
 .hottest-city-container {
     display: flex;
@@ -206,6 +218,8 @@ button:hover {
         background-position: 100% 50%;
     }
 }
+
+
 
 /* .move-clouds {
     background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLfgvbenw1A34HRCGeKctDEB2buCJKzoSdf8jdj7SKeg2pzaNWdg_fJJKasmPKURmP-Ac&usqp=CAU') repeat-x;
